@@ -4,7 +4,7 @@
 
 int main() {
     char* input[] = {
-        "let x = 42;",
+        "let x = \"slug\";",
         "let yaa = 123 + 456;",
         NULL
     };

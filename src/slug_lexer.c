@@ -38,7 +38,7 @@ static TokenKind slug_get_symbol(char* input[], int line, int* column) {
         case ',': (*column)++; return TOKEN_COMMA;
         case '+': (*column)++; return TOKEN_PLUS;
         case '=': (*column)++; return TOKEN_ASSIGN;
-        case '"': (*column)++; return TOKEN_ASP;
+        case '"': (*column)++; return TOKEN_LIT_STRING;
         default: break;
     }
 
@@ -121,7 +121,7 @@ TokenList* slug_lexer_tokenize(char* input[]) {
                 case TOKEN_LIT_INT:
                     slug_get_int_token(list, input, line, &column);
                     break;
-                case TOKEN_ASP:
+                case TOKEN_LIT_STRING:
                     slug_get_string_token(list, input, line, &column);
                     break;
                 case TOKEN_UNKNOWN:

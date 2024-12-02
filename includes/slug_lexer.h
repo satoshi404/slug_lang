@@ -19,8 +19,7 @@ typedef enum {
     TOKEN_RPAREN,
     TOKEN_LBRACE,
     TOKEN_RBRACE,
-    TOKEN_PLUS,
-    TOKEN_ASP,  
+    TOKEN_PLUS,  
     TOKEN_UNKNOWN, 
     TOKEN_EOF
 } TokenKind;
