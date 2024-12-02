@@ -25,6 +25,6 @@ int main() {
         }
     }
 
-    slug_free_list(tokens);
+    slug_lexer_free_list(tokens);
     return 0;
 }

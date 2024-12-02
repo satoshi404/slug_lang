@@ -10,6 +10,8 @@ typedef struct TokenList TokenList;
 typedef enum {
     TOKEN_IDENTIFIER,
     TOKEN_KEYWORD_LET,
+    TOKEN_KEYWORD_FUNCTION,
+    TOKEN_KEYWORD_RETURN,
     TOKEN_LIT_INT,
     TOKEN_LIT_STRING,
     TOKEN_SEMICOLON,
@@ -41,7 +43,7 @@ struct Token {
 };
 
 TokenList* slug_lexer_tokenize(char* input[]);
-void slug_free_list(TokenList* list);
+void slug_lexer_free_list(TokenList* list);
 
 char* slug_kind_to_string(Token token);
 

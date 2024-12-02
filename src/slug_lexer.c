@@ -10,6 +10,7 @@ char* slug_kind_to_string(Token token) {
     switch (token.selfKind) {
         case TOKEN_IDENTIFIER: return "Identifier"; break;
         case TOKEN_KEYWORD_LET: return "Let"; break;
+        case TOKEN_KEYWORD_FUNCTION: return "Function"; break;
         case TOKEN_LIT_INT: return "Integer"; break;
         case TOKEN_LIT_STRING: return "String"; break;
         case TOKEN_SEMICOLON: return "Semicolon"; break;
@@ -69,9 +70,12 @@ static TokenKind slug_lexer_get_symbol(char* input[], int line, int* column) {
 
 static bool slug_lexer_get_keyword(TokenList* list, char* input[], int line, int* column) {
     if (strncmp(&input[line][*column], "let", 3) == 0) {
-        Token token = slug_lexer_create_token(TOKEN_KEYWORD_LET, line, *column, NULL, NULL, 0);
-        slug_list_alloc_token(list, token);
+        slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_KEYWORD_LET, line, *column, NULL, NULL, 0));
         (*column) += 3;
+        return true;
+    } else if (strncmp(&input[line][*column], "fn", 2) == 0) {
+        slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_KEYWORD_FUNCTION, line, *column, NULL, NULL, 0));
+        (*column) += 2;
         return true;
     }
     return false;
@@ -89,8 +93,7 @@ static void slug_lexer_get_identifier(TokenList* list, char* input[], int line, 
             id[size++] = input[line][*column];
             (*column)++;
         }
-        Token token = slug_lexer_create_token(TOKEN_IDENTIFIER, line, *column, id, NULL, 0);
-        slug_list_alloc_token(list, token);
+        slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_IDENTIFIER, line, *column, id, NULL, 0));
     }
 }
 
@@ -100,8 +103,7 @@ static void slug_lexer_get_literal_int32(TokenList* list, char* input[], int lin
         value = value * 10 + (input[line][*column] - '0');
         (*column)++;
     }
-    Token token = slug_lexer_create_token(TOKEN_LIT_INT, line, *column, NULL, NULL, value);
-    slug_list_alloc_token(list, token);
+    slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_LIT_INT, line, *column, NULL, NULL, value));
 }
 
 static void slug_lexer_get_literal_string(TokenList* list, char* input[], int line, int* column) {
@@ -112,8 +114,7 @@ static void slug_lexer_get_literal_string(TokenList* list, char* input[], int li
         (*column)++;
     }
     (*column)++;
-    Token token = slug_lexer_create_token(TOKEN_LIT_STRING, line, *column, NULL, lit_string, 0);
-    slug_list_alloc_token(list, token);
+    slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_LIT_STRING, line, *column, NULL, lit_string, 0));
 }
 
 TokenList* slug_lexer_tokenize(char* input[]) {
@@ -148,19 +149,17 @@ TokenList* slug_lexer_tokenize(char* input[]) {
                     column++;
                     break;
                 default:
-                    Token token = slug_lexer_create_token(kind, line, column, NULL, NULL, 0);
-                    slug_list_alloc_token(list, token);
+                    slug_list_alloc_token(list, slug_lexer_create_token(kind, line, column, NULL, NULL, 0));
                     break;
             }
         }
         line++;
     }
-    Token token = slug_lexer_create_token(TOKEN_EOF, 0, 0, NULL, NULL, 0);
-    slug_list_alloc_token(list, token);
+    slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_EOF, 0, 0, NULL, NULL, 0));
     return list;
 }
 
-void slug_free_list(TokenList* list) {
+void slug_lexer_free_list(TokenList* list) {
     if (list == NULL) {
         printf("Error: Token list not allocated\n");
         exit(1);
