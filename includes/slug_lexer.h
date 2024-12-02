@@ -43,4 +43,6 @@ struct Token {
 TokenList* slug_lexer_tokenize(char* input[]);
 void slug_free_list(TokenList* list);
 
+char* slug_kind_to_string(Token token);
+
 #endif // _SLUG_LEXER_H 

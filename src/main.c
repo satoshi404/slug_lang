@@ -13,7 +13,7 @@ int main() {
 
     for (size_t i = 0; i < tokens->size; i++) {
         Token token = tokens->data[i];
-        printf("Token kind: %d, Line: %d, Column: %d, ", token.selfKind, token.line, token.column);
+        printf("Token kind: %s, Line: %d, Column: %d, ", slug_kind_to_string(token), token.line, token.column);
         if (token.selfKind == TOKEN_IDENTIFIER) {
             printf("Identifier: %s\n", token.ident);
         } else if (token.selfKind == TOKEN_LIT_INT) { 
