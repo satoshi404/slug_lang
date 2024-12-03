@@ -1,0 +1,7 @@
+let test = "Hello world";
+let test2 = 34;
+fn main() {
+    let a =  1;
+    let b = 34;
+    let c = a + b;
+}

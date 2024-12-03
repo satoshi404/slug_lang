@@ -21,6 +21,9 @@ char* slug_kind_to_string(Token token) {
         case TOKEN_LBRACE: return "Left Brace"; break;
         case TOKEN_RBRACE: return "Right Brace"; break;
         case TOKEN_PLUS: return "Plus"; break;
+        case TOKEN_MINUS: return "Minus"; break;
+        case TOKEN_TIMES: return "Times"; break;
+        case TOKEN_DIVIDE: return "Divide"; break;
         default: return "Eof"; break;
     }
 }
@@ -56,9 +59,13 @@ static TokenKind slug_lexer_get_symbol(char* input[], int line, int* column) {
         case ')': (*column)++; return TOKEN_RPAREN;
         case ';': (*column)++; return TOKEN_SEMICOLON;
         case ',': (*column)++; return TOKEN_COMMA;
-        case '+': (*column)++; return TOKEN_PLUS;
         case '=': (*column)++; return TOKEN_ASSIGN;
         case '"': (*column)++; return TOKEN_LIT_STRING;
+        // Operators 
+        case '+': (*column)++; return TOKEN_PLUS;
+        case '-': (*column)++; return TOKEN_MINUS;
+        case '*': (*column)++; return TOKEN_TIMES;
+        case '/': (*column)++; return TOKEN_DIVIDE;
         default: break;
     }
 
@@ -117,32 +124,32 @@ static void slug_lexer_get_literal_string(TokenList* list, char* input[], int li
     slug_list_alloc_token(list, slug_lexer_create_token(TOKEN_LIT_STRING, line, *column, NULL, lit_string, 0));
 }
 
-TokenList* slug_lexer_tokenize(char* input[]) {
+TokenList* slug_lexer_tokenize(SourceFile* file) {
     TokenList* list = malloc(sizeof(TokenList));
     list->size = 0;
     list->capacity = 4;
     list->data = malloc(list->capacity * sizeof(Token));
 
-    int line = 0;
-    while (input[line] != NULL) {
+    int line = 0;;
+    while (line < file->size) {
         int column = 0;
-        while (column < strlen(input[line])) {
-            if (isspace(input[line][column])) {
+        while (column < strlen(file->path[line])) {
+            if (isspace(file->path[line][column])) {
                 column++;
                 continue;
             }
-            if (slug_lexer_get_keyword(list, input, line, &column)) continue;
+            if (slug_lexer_get_keyword(list, file->path, line, &column)) continue;
 
-            TokenKind kind = slug_lexer_get_symbol(input, line, &column);
+            TokenKind kind = slug_lexer_get_symbol(file->path, line, &column);
             switch (kind) {
                 case TOKEN_IDENTIFIER:
-                    slug_lexer_get_identifier(list, input, line, &column);
+                    slug_lexer_get_identifier(list, file->path, line, &column);
                     break;
                 case TOKEN_LIT_INT:
-                    slug_lexer_get_literal_int32(list, input, line, &column);
+                    slug_lexer_get_literal_int32(list, file->path, line, &column);
                     break;
                 case TOKEN_LIT_STRING:
-                    slug_lexer_get_literal_string(list, input, line, &column);
+                    slug_lexer_get_literal_string(list, file->path, line, &column);
                     break;
                 case TOKEN_UNKNOWN:
                     printf("Unknown token at line %d, column %d\n", line, column);

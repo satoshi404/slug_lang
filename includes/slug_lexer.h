@@ -1,5 +1,6 @@
 #ifndef _SLUG_LEXER_H
 #define _SLUG_LEXER_H
+#include "slug_rw.h"
 #include <stdint.h>
 #include <stddef.h>
 
@@ -21,8 +22,14 @@ typedef enum {
     TOKEN_RPAREN,
     TOKEN_LBRACE,
     TOKEN_RBRACE,
-    TOKEN_PLUS,  
-    TOKEN_UNKNOWN, 
+    TOKEN_UNKNOWN,
+    // --------------------------------
+    // Operators
+    TOKEN_PLUS,
+    TOKEN_MINUS,
+    TOKEN_TIMES,
+    TOKEN_DIVIDE,
+    // --------------------------------
     TOKEN_EOF
 } TokenKind;
 
@@ -42,7 +49,7 @@ struct Token {
     } literal;
 };
 
-TokenList* slug_lexer_tokenize(char* input[]);
+TokenList* slug_lexer_tokenize(SourceFile* file);
 void slug_lexer_free_list(TokenList* list);
 
 char* slug_kind_to_string(Token token);

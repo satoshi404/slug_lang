@@ -1,15 +1,15 @@
 #include <slug_lexer.h>
+#include <slug_rw.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 int main() {
-    char* input[] = {
-        "let x = \"slug\";",
-        "let yaa = 123 + 456;",
-        NULL
-    };
-
-    TokenList* tokens = slug_lexer_tokenize(input);
+    SourceFile* file = slug_rw_read_file("tests/main.slug");
+    if (file == NULL) {
+        printf("Error: Could not open file\n");
+        exit(1);
+    }
+    TokenList* tokens = slug_lexer_tokenize(file);
 
     for (size_t i = 0; i < tokens->size; i++) {
         Token token = tokens->data[i];
@@ -25,6 +25,7 @@ int main() {
         }
     }
 
+    slug_rw_free(file);
     slug_lexer_free_list(tokens);
     return 0;
 }
