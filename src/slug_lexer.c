@@ -1,4 +1,3 @@
-#define _SLUG_LEXER_DEBUG
 #include "slug_lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -131,9 +130,9 @@ TokenList* slug_lexer_tokenize(SourceFile* file) {
     list->data = malloc(list->capacity * sizeof(Token));
 
     int line = 0;;
-    while (line < file->size) {
+    while ((size_t) line < file->size) {
         int column = 0;
-        while (column < strlen(file->path[line])) {
+        while ((size_t) column < strlen(file->path[line])) {
             if (isspace(file->path[line][column])) {
                 column++;
                 continue;

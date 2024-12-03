@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Habilitar modo de erro e exibir comandos
+set -xe
+
+# Variáveis
+SOURCES="src/*.c"              # Arquivos de origem
+INCLUDES="includes/"           # Diretório de includes
+OBJECT_DIR="object"            # Diretório para arquivos .o
+OUTPUT_FILE="slug"             # Nome do executável de saída
+GCC_FLAGS="-Wall -Wextra -O0"  # Flags do GCC
+
+# Criar diretório de objetos se não existir
+mkdir -p $OBJECT_DIR
+
+# Função de limpeza
+clean() {
+    echo "Cleaning up..."
+    rm -f $OUTPUT_FILE         # Remove o executável
+    rm -f $OBJECT_DIR/*.o      # Remove arquivos objeto
+    rm -rf $OBJECT_DIR         # Remove o diretorio de objetos
+    echo "Cleaned up: Removed $OUTPUT_FILE and object files in $OBJECT_DIR"
+}
+
+# Função de compilação
+build() {
+    # Compilar cada arquivo fonte para um arquivo objeto
+    for src in $SOURCES; do
+        filename=$(basename "$src" .c)      # Obtém o nome base do arquivo sem a extensão
+        gcc $GCC_FLAGS -c "$src" -I $INCLUDES -o "$OBJECT_DIR/$filename.o"  # Gera o arquivo objeto
+    done
+
+    # Vincular arquivos objeto para criar o executável
+    gcc $OBJECT_DIR/*.o -o $OUTPUT_FILE
+    echo "Compilation success!: ./$OUTPUT_FILE"
+}
+
+# Verificar o primeiro argumento
+if [ "$1" == "clean" ]; then
+    clean
+else
+    build
+fi

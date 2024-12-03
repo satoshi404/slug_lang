@@ -34,7 +34,7 @@ SourceFile* slug_rw_read_file(char* path) {
 }
 
 void slug_rw_free(SourceFile* file) {
-    for (int i = 0; i < file->size; i++) {
+    for (int i = 0; (size_t) i < file->size; i++) {
         free(file->path[i]);
     }
     free(file->path);
